@@ -31,12 +31,12 @@ func unimplemented(conn net.Conn) {
 	_, _ = conn.Write([]byte(buf))
 }
 
-func handleCGI(path string) ([]byte, error) {
+func handlePyCGI(path string) ([]byte, error) {
 	// Set environment variables
 	env := os.Environ()
 
 	// Create CGI process
-	cmd := exec.Command(path)
+	cmd := exec.Command("python", path)
 	cmd.Env = env
 	stdout, _ := cmd.StdoutPipe()
 
@@ -162,8 +162,8 @@ func execute(path string, query_string string) []byte {
 			log.Fatal(err)
 		}
 		return file
-	} else if strings.HasSuffix(path, ".sh") {
-		out, err := handleCGI(path[1:])
+	} else if strings.HasSuffix(path, ".py") {
+		out, err := handlePyCGI(path[1:])
 		if err != nil {
 			fmt.Println(err.Error())
 		}
