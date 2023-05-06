@@ -32,20 +32,20 @@ esac
 
 # Generate calendar table rows
 day=1 
-while [ $day -le $totaldays ]; do
-    echo "<tr>"
+while [[ $day -le $totaldays ]] ; do
+    echo "<tr>"  
     for i in $(seq 1 7); do
-        if [ $i -le $empty ]; then
+        if [ $i -le $empty ] ; then
             echo "<td>&nbsp;</td>"
-        elif [ $day -le $totaldays ]; then 
-            echo "<td>$day</td>"
+        elif [ $day -le $totaldays ] ; then      
+            echo "<td>$day</td>"  
             day=$((day + 1))
-        else
+        else       
             echo "<td>&nbsp;</td>"
         fi
     done
-    echo "</tr>"
-done 
+    echo "</tr>"  
+done
 
 # Print HTML tail 
 cat <<EOF
