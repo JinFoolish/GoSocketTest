@@ -1,31 +1,30 @@
-#!/usr/bin/python
-
-import cgi
 import calendar
+import datetime
 
-# Print HTTP header 
-print("Content-Type: text/html")
 print()
 
-# Get current month and year 
-form = cgi.FieldStorage()
-if "month" in form and "year" in form:
-    month = int(form["month"].value)
-    year = int(form["year"].value)
-else:
-    month = int(cgi.escape(input("Month: ")))
-    year = int(cgi.escape(input("Year: ")))
+# Get current month and year
+now = datetime.datetime.now()
+year = now.year
+month = now.month
 
-# Print HTML header
+# Print HTML headers
 print("<html>")
+print("<head>")
+print("<title>Current Month Calendar</title>")  
+print("</head>")
 print("<body>")
-print("<h1>Calendar - %d/%d</h1>" % (month, year))
 
-# Generate calendar 
-c = calendar.HTMLCalendar()
-calendar_html = c.formatmonth(year, month)
+# Print month header 
+print("<h2>{0} {1}</h2>".format(calendar.month_name[month], year))
 
-# Print HTML tail
-print(calendar_html)  
+# Get calendar 
+cal = calendar.HTMLCalendar(calendar.MONDAY) 
+table = cal.formatmonth(year, month) 
+
+# Print calendar
+print(table)  
+
+# Finish HTML  
 print("</body>")
 print("</html>")
