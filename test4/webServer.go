@@ -162,7 +162,7 @@ func execute(path string, query_string string) []byte {
 			log.Fatal(err)
 		}
 		return file
-	} else if strings.HasSuffix(path, ".py") {
+	} else if strings.HasSuffix(path, ".sh") {
 		out, _ := handleCGI(path[1:])
 		return out
 	}
