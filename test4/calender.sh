@@ -32,12 +32,12 @@ esac
 
 # Generate calendar table rows
 day=1 
-while [[ $day -le $totaldays ]] ; do
+while [[ $day <= $totaldays ]] ; do
     echo "<tr>"  
     for i in $(seq 1 7); do
-        if [ $i -le $empty ] ; then
+        if [[ $i <= $empty ]] ; then
             echo "<td>&nbsp;</td>"
-        elif [ $day -le $totaldays ] ; then      
+        elif [[ $day <= $totaldays ]] ; then      
             echo "<td>$day</td>"  
             day=$((day + 1))
         else       
