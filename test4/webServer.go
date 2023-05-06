@@ -163,7 +163,10 @@ func execute(path string, query_string string) []byte {
 		}
 		return file
 	} else if strings.HasSuffix(path, ".sh") {
-		out, _ := handleCGI(path[1:])
+		out, err := handleCGI(path[1:])
+		if err != nil {
+			fmt.Println(err.Error())
+		}
 		return out
 	}
 
