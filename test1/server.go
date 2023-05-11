@@ -25,7 +25,7 @@ var (
 )
 
 func main() {
-	conn, err := net.Listen("tcp", "127.0.0.1:9090") //监听本机9090端口
+	conn, err := net.Listen("tcp", "127.0.0.1:10000") //监听本机9090端口
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -65,11 +65,12 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-
+		fmt.Println("has client")
 		go func() {
 			client := accept.RemoteAddr().String()                                         //客户端地址
 			name := "guest" + client[strings.LastIndex(client, ":")+1:len([]rune(client))] //使用端口号作为名称后缀
-			clients[name] = accept                                                         //将用户存入map
+			clients[name] = accept
+			fmt.Print(client) //将用户存入map
 			msg <- "<" + name + "已经加入群聊" + ">" + "\n" + "======>"
 			input := bufio.NewScanner(accept)
 			for input.Scan() { //循环接收内容

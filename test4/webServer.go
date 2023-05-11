@@ -117,12 +117,23 @@ func accept_request_thread(conn net.Conn) {
 
 		fmt.Println(path + "请求已经创建")
 		resp := execute(path, query_string)
-		header(conn, "text/html", len(resp))
+		if strings.HasSuffix(path, ".html") || strings.HasSuffix(path, ".py") || path == "/" {
+			header(conn, "text/html", len(resp))
+		} else {
+			header(conn, "application/octet-stream", len(resp))
+			setheader(conn, "Content-Disposition", path[1:])
+		}
 		_, err := conn.Write(resp)
 		if err != nil {
 			fmt.Println(err)
 		}
 	}
+}
+
+func setheader(conn net.Conn, name string, value string) {
+	var buf string
+	buf = name + ": " + value + "\r\n"
+	_, _ = conn.Write([]byte(buf))
 }
 
 func header(conn net.Conn, content_type string, length int) {
@@ -132,8 +143,8 @@ func header(conn net.Conn, content_type string, length int) {
 	_, _ = conn.Write([]byte(buf))
 	buf = "Server: httpd/0.1.0\r\n"
 	_, _ = conn.Write([]byte(buf))
-	buf = "Content-Type: " + content_type + "\r\n"
-	_, _ = conn.Write([]byte(buf))
+	// buf = "Content-Type: " + content_type + "\r\n"
+	// _, _ = conn.Write([]byte(buf))
 	_, _ = fmt.Sscanf(buf, "Content-Length: %d\r\n", length)
 	buf = "Content-Type: " + content_type + "\r\n"
 	_, _ = conn.Write([]byte(buf))
@@ -156,7 +167,7 @@ func execute(path string, query_string string) []byte {
 			log.Fatal(err)
 		}
 		return file
-	} else if strings.HasSuffix(path, ".html") || strings.HasSuffix(path, ".txt") {
+	} else if strings.HasSuffix(path, ".html") {
 		file, err := os.ReadFile(path[1:])
 		if err != nil {
 			log.Fatal(err)

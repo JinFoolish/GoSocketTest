@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	conn, err := net.Dial("tcp", "127.0.0.1:9090") //建立网络连接
+	conn, err := net.Dial("tcp", "127.0.0.1:10000") //建立网络连接
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,8 +36,8 @@ func getMsg(conn net.Conn) {
 				fmt.Print("拜拜")
 				conn.Close()
 				os.Exit(0) //退出
-			} else if string(buf[:4]) == "msg/" {
-				fmt.Print(string(buf[4:n]))
+			} else {
+				fmt.Print(string(buf[:n]))
 			}
 		}
 	}
