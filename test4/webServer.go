@@ -127,13 +127,19 @@ func accept_request_thread(conn net.Conn) {
 		}
 
 		fmt.Println(path + "请求已经创建")
-		resp := execute(path, query_string)
-		if strings.HasSuffix(path, ".html") || strings.HasSuffix(path, ".py") || path == "/" {
-			header(conn, "text/html", len(resp))
+		var resp []byte
+		if exist, _ := exists(path); exist {
+			resp = execute(path, query_string)
+			if strings.HasSuffix(path, ".html") || strings.HasSuffix(path, ".py") || path == "/" {
+				header(conn, "text/html", len(resp))
+			} else {
+				header(conn, "application/octet-stream", len(resp))
+				setheader(conn, "Content-Disposition", path[1:])
+			}
 		} else {
-			header(conn, "application/octet-stream", len(resp))
-			setheader(conn, "Content-Disposition", path[1:])
+			resp = []byte("no such path")
 		}
+
 		_, err := conn.Write(resp)
 		if err != nil {
 			fmt.Println(err)
@@ -171,9 +177,6 @@ func execute(path string, query_string string) []byte {
 	// resp := make(map[string]interface{})
 	// resp["id"] = id
 	// resp["code"] = 200
-	if exist, _ := exists(path); !exist {
-		return []byte("no such path")
-	}
 	if "/" == path {
 		file, err := os.ReadFile("index.html")
 		if err != nil {
