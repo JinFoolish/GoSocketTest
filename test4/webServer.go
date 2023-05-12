@@ -32,7 +32,8 @@ func unimplemented(conn net.Conn) {
 }
 
 func exists(path string) (bool, error) {
-	_, err := os.Stat(path)
+	dir, _ := os.Getwd()
+	_, err := os.Stat(dir + path)
 	if err == nil {
 		return true, nil
 	}
