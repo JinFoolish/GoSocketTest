@@ -137,6 +137,7 @@ func accept_request_thread(conn net.Conn) {
 				setheader(conn, "Content-Disposition", path[1:])
 			}
 		} else {
+			header(conn, "text/html", len(resp))
 			resp = []byte("no such path")
 		}
 
