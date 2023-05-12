@@ -31,6 +31,16 @@ func unimplemented(conn net.Conn) {
 	_, _ = conn.Write([]byte(buf))
 }
 
+func exists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return true, err
+}
 func handlePyCGI(path string) ([]byte, error) {
 	// Set environment variables
 	env := os.Environ()
@@ -155,20 +165,16 @@ func header(conn net.Conn, content_type string, length int) {
 func execute(path string, query_string string) []byte {
 	query_params := make(map[string]string)
 	parse_query_params(query_string, query_params)
-	// camera_id := query_params["camera_id"]
+	// _id := query_params["id"]
 
 	// resp := make(map[string]interface{})
-	// resp["camera_id"] = camera_id
+	// resp["id"] = id
 	// resp["code"] = 200
-
+	if exist, _ := exists(path); !exist {
+		return []byte("no such path")
+	}
 	if "/" == path {
 		file, err := os.ReadFile("index.html")
-		if err != nil {
-			log.Fatal(err)
-		}
-		return file
-	} else if strings.HasSuffix(path, ".html") {
-		file, err := os.ReadFile(path[1:])
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -179,9 +185,14 @@ func execute(path string, query_string string) []byte {
 			fmt.Println(err.Error())
 		}
 		return out
+	} else {
+		file, err := os.ReadFile(path[1:])
+		if err != nil {
+			log.Fatal(err)
+		}
+		return file
 	}
 
-	return []byte("no such path")
 }
 
 func parse_query_params(query_string string, query_params map[string]string) {

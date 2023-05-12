@@ -21,7 +21,6 @@ var (
 	msg      = make(chan string)  //用于新用户加入时广播信息
 	chatMsgs = make(chan chatMsg) //发送聊天信息
 	exit     = make(chan chatMsg) //离开信息
-	trans    = make(chan chatMsg) //传输信息
 )
 
 func main() {
@@ -41,7 +40,6 @@ func main() {
 					} else {
 						fmt.Fprint(accept, chat.t+" "+chat.name+" 说："+chat.msg+"\n"+"=====>")
 					}
-
 				}
 			case exitMsg := <-exit: //有用户离开了
 				for name, accept := range clients {
@@ -65,7 +63,6 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("has client")
 		go func() {
 			client := accept.RemoteAddr().String()                                         //客户端地址
 			name := "guest" + client[strings.LastIndex(client, ":")+1:len([]rune(client))] //使用端口号作为名称后缀
